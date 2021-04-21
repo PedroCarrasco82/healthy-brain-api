@@ -1,0 +1,40 @@
+
+version: '3'
+
+services: 
+  mongodb-healthy-brain:
+    image: mongo
+    container_name: mongodb-healthy-brain
+    networks: 
+      - mongodb_network
+    volumes:
+      - 'mongodb_data:/bitnami/mongodb'
+    environment: 
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGODB_DATABASE}
+    ports:
+      - "27017:27017"
+  healthy-brain-api:
+    image: "node:14.16-slim"
+    networks: 
+      - mongodb_network
+      - base_network
+    ports:
+      - "8080:8080"
+    working_dir: /app
+    command: sh -c "yarn && yarn start:dev"
+    depends_on: 
+      - mongodb-healthy-brain
+    volumes: 
+      - .:/app
+    environment: 
+      NODE_ENV: development
+      MONGO_URI: "mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_ADDRESS}:27017/${MONGODB_DATABASE}"
+networks: 
+  base_network:
+  mongodb_network:
+volumes:
+  mongodb_data:
+    driver: local 
+  healthy-brain-api:
