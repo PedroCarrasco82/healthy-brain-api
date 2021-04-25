@@ -3,7 +3,7 @@ import { InternalServerErrorException } from '../helpers/http-helper';
 import { CreatePatientDTO } from './dtos/create-patient';
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Patient } from './interfaces/patient.interface';
-import { PatientService } from './shared/patient.service';
+import { PatientService } from './patient.service';
 
 @Controller('patients')
 export class PatientsController {

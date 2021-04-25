@@ -1,9 +1,10 @@
-import { PatientAlreadyExists } from './../errors/patient-already-exists-error';
-import { CreatePatientDTO } from '../dtos/create-patient';
+import { PatientAlreadyExists } from './errors/patient-already-exists-error';
+import { CreatePatientDTO } from './dtos/create-patient';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Patient } from '../interfaces/patient.interface';
+import { Patient } from './interfaces/patient.interface';
 import { InjectModel } from '@nestjs/mongoose';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class PatientService {
@@ -39,6 +40,10 @@ export class PatientService {
   }
 
   private async create(createPatientDTO: CreatePatientDTO) {
+    createPatientDTO.password = await bcrypt.hash(
+      createPatientDTO.password,
+      10,
+    );
     const createdPatient = new this.patientModel(createPatientDTO);
     return await createdPatient.save();
   }
