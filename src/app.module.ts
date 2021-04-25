@@ -1,3 +1,4 @@
+import { PatientsModule } from './patients/patients.module';
 import { AppController } from './app.controller';
 import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
@@ -11,6 +12,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       useUnifiedTopology: true,
       useFindAndModify: false,
     }),
+    PatientsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
