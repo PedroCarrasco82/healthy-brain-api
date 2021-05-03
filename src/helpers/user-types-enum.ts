@@ -1,0 +1,4 @@
+export enum UserTypes {
+  HEALTH_PROFESSIONAL = 'HEALTH_PROFESSIONAL',
+  PATIENT = 'PATIENT',
+}
