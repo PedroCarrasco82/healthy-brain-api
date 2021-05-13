@@ -40,4 +40,13 @@ export class UsersService {
     const createdUser = new this.userModel(createUserDTO);
     return await createdUser.save();
   }
+
+  async getByEmail(email: string) {
+    const user = await this.userModel
+      .findOne({ email })
+      .select('+password')
+      .exec();
+
+    return user;
+  }
 }

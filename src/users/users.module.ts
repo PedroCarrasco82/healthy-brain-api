@@ -15,5 +15,6 @@ import { Module } from '@nestjs/common';
   ],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService],
 })
-export class PatientsModule {}
+export class UsersModule {}

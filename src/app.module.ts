@@ -1,8 +1,11 @@
-import { PatientsModule } from './users/users.module';
+import { UsersModule } from './users/users.module';
 import { AppController } from './app.controller';
 import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthService } from './auth/auth.service';
+import { AuthController } from './auth/auth.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -12,9 +15,10 @@ import { MongooseModule } from '@nestjs/mongoose';
       useUnifiedTopology: true,
       useFindAndModify: false,
     }),
-    PatientsModule,
+    UsersModule,
+    AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, AuthController],
+  providers: [AppService, AuthService],
 })
 export class AppModule {}

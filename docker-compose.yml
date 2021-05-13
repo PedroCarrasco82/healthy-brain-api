@@ -31,6 +31,7 @@ services:
     environment: 
       NODE_ENV: development
       MONGO_URI: "mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_ADDRESS}:27017/${MONGODB_DATABASE}"
+      AUTH_SECRET_KEY: "${AUTH_SECRET_KEY}"
 networks: 
   base_network:
   mongodb_network:
