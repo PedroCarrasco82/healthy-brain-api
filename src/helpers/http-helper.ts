@@ -11,3 +11,15 @@ export class UnprocessableEntityException extends HttpException {
     super(message, HttpStatus.UNPROCESSABLE_ENTITY);
   }
 }
+
+export class ForbiddenException extends HttpException {
+  constructor(message: string) {
+    super(message, HttpStatus.FORBIDDEN);
+  }
+}
+
+export class BadRequestException extends HttpException {
+  constructor(message: string) {
+    super(message, HttpStatus.BAD_REQUEST);
+  }
+}

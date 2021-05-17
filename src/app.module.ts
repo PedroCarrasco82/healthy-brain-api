@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SchedulesModule } from './schedules/schedules.module';
 
 @Module({
   imports: [
@@ -13,8 +14,9 @@ import { MongooseModule } from '@nestjs/mongoose';
       useFindAndModify: false,
     }),
     PatientsModule,
+    SchedulesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

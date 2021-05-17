@@ -5,6 +5,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  console.log(process.env.MONGO_URI);
+
   const config = new DocumentBuilder()
     .setTitle('Healthy Brain API')
     .setDescription('The Healthy Brain API documentation')
