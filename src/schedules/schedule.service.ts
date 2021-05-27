@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateScheduleDTO } from './dtos/create-schedule';
@@ -23,7 +23,7 @@ export class ScheduleService {
 
     async createSchedule(createScheduleDTO: CreateScheduleDTO) {
         if (createScheduleDTO.endDate < createScheduleDTO.date) {
-            throw (`A data final ${createScheduleDTO.endDate} deve ser posterior que a data inicial ${createScheduleDTO.date}`);
+            throw new BadRequestException(`A data final ${createScheduleDTO.endDate} deve ser posterior que a data inicial ${createScheduleDTO.date}`);
         }
         const createdSchedule = new this.scheduleModel(createScheduleDTO);
         return await createdSchedule.save();
@@ -35,7 +35,7 @@ export class ScheduleService {
             throw new NotFoundException(`Schedule with id ${id} not exists`);
         }
         if (updateScheduleDTO.endDate < updateScheduleDTO.date) {
-            throw (`A data final ${updateScheduleDTO.endDate} deve ser posterior que a data inicial ${updateScheduleDTO.date}`);
+            throw new BadRequestException(`A data final ${updateScheduleDTO.endDate} deve ser posterior que a data inicial ${updateScheduleDTO.date}`);
         }
         await this.scheduleModel.findByIdAndUpdate({ _id: id }, updateScheduleDTO).exec();
         return this.getById(id);

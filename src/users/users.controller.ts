@@ -2,6 +2,7 @@ import { CreateUserDTO } from './dtos/create-user';
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { User } from './interfaces/user.interface';
 import { UsersService } from './users.service';
+import { ObjectId } from 'mongoose';
 
 @Controller('users')
 export class UsersController {
@@ -13,7 +14,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  async getById(@Param('id') id: number): Promise<User> {
+  async getById(@Param('id') id: ObjectId): Promise<User> {
     return this.usersService.getById(id);
   }
 

@@ -1,7 +1,7 @@
 import { UserAlreadyExists } from './errors/user-already-exists-error';
 import { CreateUserDTO } from './dtos/create-user';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { User } from './interfaces/user.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
@@ -14,7 +14,7 @@ export class UsersService {
     return await this.userModel.find().exec();
   }
 
-  async getById(_id: number): Promise<User> {
+  async getById(_id: ObjectId): Promise<User> {
     const user = await this.userModel.findById(_id).exec();
     if (!user) {
       throw new NotFoundException(`User with id ${_id} not exists`);

@@ -15,5 +15,6 @@ import { MongooseModule } from '@nestjs/mongoose';
   ],
   controllers: [SchedulesController],
   providers: [ScheduleService],
+  exports: [ScheduleService]
 })
 export class SchedulesModule {}

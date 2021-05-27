@@ -7,6 +7,7 @@ import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { SchedulesModule } from './schedules/schedules.module';
+import { ConsultationsModule } from './consultations/consultations.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SchedulesModule } from './schedules/schedules.module';
     AuthModule,
     UsersModule,
     SchedulesModule,
+    ConsultationsModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService],
