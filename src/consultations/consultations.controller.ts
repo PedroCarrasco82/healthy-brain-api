@@ -1,4 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { UnauthorizedException } from './../helpers/http-helper';
+import { UserTypes } from './../helpers/user-types-enum';
+import { JwtAuthGuard } from './../auth/jwt-auth.guard';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { ConsultationsService } from './consultations.service';
 import { CreateConsultationDto } from './dto/create-consultation.dto';
 import { UpdateConsultationDto } from './dto/update-consultation.dto';
@@ -12,15 +25,23 @@ export class ConsultationsController {
   async getAll(): Promise<Consult[]> {
     return this.consultationsService.getAll();
   }
-  
+
   @Get(':id')
   async getById(@Param('id') id: string): Promise<Consult> {
     return this.consultationsService.getById(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createConsultationDto: CreateConsultationDto) {
-    try{
+  async create(
+    @Body() createConsultationDto: CreateConsultationDto,
+    @Request() req,
+  ) {
+    try {
+      console.log(req.user);
+      if (req.user.userType !== UserTypes.PATIENT) {
+        throw new UnauthorizedException('the user must be patient');
+      }
       await this.consultationsService.createConsult(createConsultationDto);
     } catch (error) {
       throw error;
@@ -30,18 +51,18 @@ export class ConsultationsController {
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateConsultationDto: UpdateConsultationDto
+    @Body() updateConsultationDto: UpdateConsultationDto,
   ): Promise<Consult> {
-    try{
+    try {
       return this.consultationsService.updateConsult(id, updateConsultationDto);
-    } catch(error) {
+    } catch (error) {
       throw error;
     }
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    try{
+    try {
       this.consultationsService.deleteConsult(id);
     } catch (error) {
       throw error;
