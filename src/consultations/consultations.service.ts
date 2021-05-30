@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateConsultationDto } from './dto/create-consultation.dto';
 import { UpdateConsultationDto } from './dto/update-consultation.dto';
 import { Consult } from './interfaces/consult.interface';
@@ -15,7 +19,8 @@ export class ConsultationsService {
   constructor(
     private scheduleService: ScheduleService,
     private usersService: UsersService,
-    @InjectModel('Consult') private readonly consultModel: Model<Consult>) { }
+    @InjectModel('Consult') private readonly consultModel: Model<Consult>,
+  ) {}
 
   async getAll(): Promise<Consult[]> {
     return await this.consultModel.find().exec();
@@ -30,39 +35,54 @@ export class ConsultationsService {
   }
 
   async createConsult(createConsultationDto: CreateConsultationDto) {
-    if(createConsultationDto.consultDateTime > createConsultationDto.endDateTime) {
-      throw new BadRequestException(`A data final ${createConsultationDto.endDateTime} deve ser posterior que a data inicial ${createConsultationDto.consultDateTime}`);
+    if (
+      createConsultationDto.consultDateTime > createConsultationDto.endDateTime
+    ) {
+      throw new BadRequestException(
+        `A data final ${createConsultationDto.endDateTime} deve ser posterior que a data inicial ${createConsultationDto.consultDateTime}`,
+      );
     }
-    
+
     const createConsult = new this.consultModel(createConsultationDto);
     createConsult.status = ConsultStatusTypes.WAITING;
     const createId = await createConsult.save();
 
-    const healthProfessional = await this.usersService.getById(createConsultationDto.healthProfessionalId);
+    const healthProfessional = await this.usersService.getById(
+      createConsultationDto.healthProfessionalId,
+    );
     const createScheduleDTO: CreateScheduleDTO = {
       date: createConsultationDto.consultDateTime,
       endDate: createConsultationDto.endDateTime,
       type: ScheduleTypes.CONSULT,
       description: `Consulta com o Dr(a) ${healthProfessional.name}`,
-      consultId: createId._id
+      consultId: createId._id,
     };
     this.scheduleService.createSchedule(createScheduleDTO);
     return createId;
   }
 
-  async updateConsult(id: string, updateConsultationDto: UpdateConsultationDto) {
+  async updateConsult(
+    id: string,
+    updateConsultationDto: UpdateConsultationDto,
+  ) {
     const consult = this.getById(id);
-    if(!consult){
+    if (!consult) {
       throw new NotFoundException(`Consulta com o id ${id} não existe`);
     }
-    if(updateConsultationDto.consultDateTime > updateConsultationDto.endDateTime) {
-      throw new BadRequestException(`A data final ${updateConsultationDto.endDateTime} deve ser posterior que a data inicial ${updateConsultationDto.consultDateTime}`);
+    if (
+      updateConsultationDto.consultDateTime > updateConsultationDto.endDateTime
+    ) {
+      throw new BadRequestException(
+        `A data final ${updateConsultationDto.endDateTime} deve ser posterior que a data inicial ${updateConsultationDto.consultDateTime}`,
+      );
     }
-    await this.consultModel.findByIdAndUpdate({ _id: id}, updateConsultationDto).exec();
+    await this.consultModel
+      .findByIdAndUpdate({ _id: id }, updateConsultationDto)
+      .exec();
     return this.getById(id);
   }
 
   async deleteConsult(id: string) {
-    return await this.consultModel.deleteOne({ _id: id}).exec();
+    return await this.consultModel.deleteOne({ _id: id }).exec();
   }
 }

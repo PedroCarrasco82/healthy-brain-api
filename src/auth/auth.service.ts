@@ -13,7 +13,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(userLoginDto: UserLoginDTO) {
+  async validateUser(userLoginDto: UserLoginDTO) {
     const user = await this.usersService.getByEmail(userLoginDto.email);
     if (!user) throw new UserNotFoundException();
 
@@ -22,7 +22,13 @@ export class AuthService {
       user.password,
     );
     if (!passwordCompare) throw new BadRequestException('Invalid password');
-    const payload = { id: user._id, userType: user.userType };
+
+    return user;
+  }
+
+  async login(UserLoginDTO: UserLoginDTO) {
+    const user = await this.validateUser(UserLoginDTO);
+    const payload = { userId: user._id, userType: user.userType };
     user.password = undefined;
     return {
       user,

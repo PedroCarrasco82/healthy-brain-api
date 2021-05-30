@@ -28,3 +28,9 @@ export class BadRequestException extends HttpException {
     super(message, HttpStatus.BAD_REQUEST);
   }
 }
+
+export class UnauthorizedException extends HttpException {
+  constructor(message: string) {
+    super(message, HttpStatus.UNAUTHORIZED);
+  }
+}
