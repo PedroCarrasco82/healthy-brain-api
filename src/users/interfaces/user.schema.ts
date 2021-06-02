@@ -25,6 +25,7 @@ export const UserSchema = new mongoose.Schema(
     userType: {
       type: String,
       enum: UserTypes,
+      required: true,
     },
     professionalHealthRegisterCode: {
       registerCodeType: String,

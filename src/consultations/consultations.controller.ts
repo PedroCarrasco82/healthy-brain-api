@@ -1,3 +1,4 @@
+import * as mongoose from 'mongoose';
 import { UnauthorizedException } from './../helpers/http-helper';
 import { UserTypes } from './../helpers/user-types-enum';
 import { JwtAuthGuard } from './../auth/jwt-auth.guard';
@@ -35,26 +36,34 @@ export class ConsultationsController {
   @Post()
   async create(
     @Body() createConsultationDto: CreateConsultationDto,
-    @Request() req,
+    @Request() req: any,
   ) {
     try {
-      console.log(req.user);
       if (req.user.userType !== UserTypes.PATIENT) {
         throw new UnauthorizedException('the user must be patient');
       }
-      await this.consultationsService.createConsult(createConsultationDto);
+      await this.consultationsService.createConsult(
+        new mongoose.Schema.Types.ObjectId(req.user.userId),
+        createConsultationDto,
+      );
     } catch (error) {
       throw error;
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateConsultationDto: UpdateConsultationDto,
+    @Request() req: any,
   ): Promise<Consult> {
     try {
-      return this.consultationsService.updateConsult(id, updateConsultationDto);
+      return this.consultationsService.updateConsult(
+        id,
+        UserTypes[req.user.userType],
+        updateConsultationDto,
+      );
     } catch (error) {
       throw error;
     }

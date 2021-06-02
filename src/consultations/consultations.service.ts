@@ -1,3 +1,4 @@
+import { UserTypes } from './../helpers/user-types-enum';
 import {
   BadRequestException,
   Injectable,
@@ -6,7 +7,7 @@ import {
 import { CreateConsultationDto } from './dto/create-consultation.dto';
 import { UpdateConsultationDto } from './dto/update-consultation.dto';
 import { Consult } from './interfaces/consult.interface';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ScheduleService } from 'src/schedules/schedule.service';
 import { CreateScheduleDTO } from 'src/schedules/dtos/create-schedule';
@@ -34,7 +35,10 @@ export class ConsultationsService {
     return consult;
   }
 
-  async createConsult(createConsultationDto: CreateConsultationDto) {
+  async createConsult(
+    patientId: ObjectId,
+    createConsultationDto: CreateConsultationDto,
+  ) {
     if (
       createConsultationDto.consultDateTime > createConsultationDto.endDateTime
     ) {
@@ -43,7 +47,10 @@ export class ConsultationsService {
       );
     }
 
-    const createConsult = new this.consultModel(createConsultationDto);
+    const createConsult = new this.consultModel({
+      patientId,
+      ...createConsultationDto,
+    });
     createConsult.status = ConsultStatusTypes.WAITING;
     const createId = await createConsult.save();
 
@@ -63,8 +70,31 @@ export class ConsultationsService {
 
   async updateConsult(
     id: string,
+    userType: UserTypes,
     updateConsultationDto: UpdateConsultationDto,
   ) {
+    if (
+      updateConsultationDto.rate &&
+      userType === UserTypes.HEALTH_PROFESSIONAL
+    ) {
+      throw new BadRequestException("health professional can't rate consult");
+    }
+
+    if (updateConsultationDto.status && userType === UserTypes.PATIENT) {
+      throw new BadRequestException("patient can't change consult status");
+    }
+
+    if (
+      (updateConsultationDto.consultDateTime &&
+        !updateConsultationDto.endDateTime) ||
+      (updateConsultationDto.endDateTime &&
+        !updateConsultationDto.consultDateTime)
+    ) {
+      throw new BadRequestException(
+        'you must change start and end consult date',
+      );
+    }
+
     const consult = this.getById(id);
     if (!consult) {
       throw new NotFoundException(`Consulta com o id ${id} não existe`);
